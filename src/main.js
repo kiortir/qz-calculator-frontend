@@ -37,7 +37,7 @@ function queue_for_update() {
   }, 10000);
 }
 
-store.subscribe(() => {
+async function autoSave() {
   let now = Date.now();
   window.localStorage.setItem('lastUserInput', now);
   if (
@@ -47,6 +47,35 @@ store.subscribe(() => {
     window.localStorage.setItem('queue_for_update_start', now);
     queue_for_update();
   }
+}
+
+const mutation_list = []
+
+async function sendMutationInfo(mutation) {
+  checkExistance().then(isCreated => {
+    if (isCreated & mutation_list.length == 0) {
+      axios.put('mutate', {
+        time: Date.now(),
+        mutation,
+        estimation_id: store.state.id
+      })
+    }
+    else if (isCreated) {
+      
+    }
+  })
+}
+
+async function checkExistance() {
+  let id = store.state.id
+  if (id == null) {
+    store.dispatch('save')
+  }
+}
+
+store.subscribe((mutation) => {
+  autoSave()
+  sendMutationInfo(mutation)
 });
 
 const app = createApp(App);

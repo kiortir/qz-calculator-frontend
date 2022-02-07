@@ -1,5 +1,5 @@
 <template>
-  <div class="list-group list-group-flush" ref="content">
+  <div class="list-group list-group-flush" ref="content" v-if="total > 0">
     <div class="list-group-item" v-if="materialResult > 0">
       <div class="row justify-content-between g-0 mb-2">
         <span class="col h4 mb-0 py-auto">Материал</span>

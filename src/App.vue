@@ -116,13 +116,14 @@
                 role="tab"
                 aria-controls="salary"
                 aria-selected="false"
+                v-if="isEstimator"
               >
                 Затраты
               </button>
             </li>
           </ul>
           <div class="col-3">
-            <button class="btn btn-primary p-0 w-100" @click="downloadWithCSS">
+            <button class="btn btn-primary p-0 w-100" @click="save()">
               Сохранить
             </button>
           </div>
@@ -180,12 +181,13 @@ import Salary from "./components/Salary.vue";
 
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import TempControl from "./components/utility/TempControl.vue";
+// import TempControl from "./components/utility/TempControl.vue";
 
 export default {
   name: "App",
   data() {
     return {
+      isEstimator: false,
       tabs: [
         {
           component: "materials",
@@ -210,6 +212,11 @@ export default {
   //   }
   // },
   methods: {
+    async checkPermissions() {
+      this.axios.post("permissions").then((response) => {
+        this.isEstimator = response.data.isEstimator;
+      });
+    },
     async setTemplateNames() {
       this.templates = JSON.parse(
         document.getElementById("template_names").textContent
@@ -289,6 +296,7 @@ export default {
     },
   },
   created() {
+    this.checkPermissions();
     this.setTemplateNames();
     this.setTab();
   },
@@ -298,13 +306,11 @@ export default {
     Logistics,
     Result,
     Salary,
-    TemplateControl,
   },
 };
 </script>
 
 <style>
-,
 TemplateControl.vericaltext {
   width: 1px;
   word-wrap: break-word;
